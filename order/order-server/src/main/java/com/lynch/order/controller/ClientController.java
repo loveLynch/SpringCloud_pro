@@ -1,8 +1,7 @@
 package com.lynch.order.controller;
 
-import com.lynch.order.client.ProductClient;
-import com.lynch.order.domain.ProductInfo;
 import com.lynch.order.dto.CartDTO;
+import com.lynch.product.client.ProductClient;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,11 +23,11 @@ public class ClientController {
 //    @Autowired //一、3
 //    private RestTemplate restTemplate;
 
-    @Autowired
-    private ProductClient productClient;
+//    @Autowired
+//    private ProductClient productClient;
 
-    @GetMapping("/getProductMsg")
-    public String getProductMsg() {
+//    @GetMapping("/getProductMsg")
+//    public String getProductMsg() {
         /*一、RestTemplate三种方法*/
         //1.第一种方式（直接使用restTemplate，url写死）
 //        RestTemplate restTemplate = new RestTemplate();
@@ -49,25 +48,25 @@ public class ClientController {
 
 
         /*二、使用Feign*/
-        String response = productClient.productMsg();
-        log.info("response {}", response);
-        return response;
+//        String response = productClient.productMsg();
+//        log.info("response {}", response);
+//        return response;
+//
+//
+//    }
 
-
-    }
-
-    @GetMapping("/getProductList")
-    public String getProductList() {
-        List<ProductInfo> productInfoList = productClient.listForOrder(Arrays.asList("164103465734242707"));
-        log.info("response {}", productInfoList);
-        return "ok";
-
-    }
-
-
-    @GetMapping("/productDecreaseStock")
-    public String productDecreaseStock() {
-        productClient.decreaseStock(Arrays.asList(new CartDTO("164103465734242707", 3)));
-        return "ok";
-    }
+//    @GetMapping("/getProductList")
+//    public String getProductList() {
+//        List<ProductInfo> productInfoList = productClient.listForOrder(Arrays.asList("164103465734242707"));
+//        log.info("response {}", productInfoList);
+//        return "ok";
+//
+//    }
+//
+//
+//    @GetMapping("/productDecreaseStock")
+//    public String productDecreaseStock() {
+//        productClient.decreaseStock(Arrays.asList(new CartDTO("164103465734242707", 3)));
+//        return "ok";
+//    }
 }

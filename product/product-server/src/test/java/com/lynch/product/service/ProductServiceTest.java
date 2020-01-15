@@ -35,7 +35,7 @@ public class ProductServiceTest extends ProductApplicationTests {
 
     @Test
     public void decreaseStock() {
-        CartDTO cartDTO = new CartDTO("157875196366160022", 38);
+        CartDTO cartDTO = new CartDTO("157875196366160022", 1);
         productService.decreaseStock(Arrays.asList(cartDTO));
 
     }

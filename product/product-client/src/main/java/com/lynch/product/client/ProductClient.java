@@ -4,6 +4,7 @@ import com.lynch.product.common.DecreaseStockInput;
 import com.lynch.product.common.ProductInfoOutput;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -14,6 +15,7 @@ import java.util.List;
  **/
 @FeignClient(name="product",fallback = ProductClient.ProductClientFallback.class)
 public interface ProductClient {
+
 
     @PostMapping("/product/listForOrder")
     List<ProductInfoOutput> listForOrder(@RequestBody List<String> productIdList);
