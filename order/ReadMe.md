@@ -329,7 +329,7 @@ spring.cloud.stream.bindings.myMessage.group=order
 6.动态配置路由
 - git上配置配置文件，推送到项目
 - 动态导入ZuulConfig
-    ```java
+ ```java
 @Component
 public class ZuulConfig {
 
@@ -341,5 +341,62 @@ public class ZuulConfig {
 }
 
 ```
+7.典型应用场景
+- 前置（Pre)
+    - 限流
+    - 鉴权
+    - 参数校验调整
+- 后置（Post）
+    - 统计
+    - 日志
+    
+8.Zuul的高可用
+- 多个Zuul节点注册到Eureka Server
+- Nginx和Zuul"混搭"
+
+
+# Zuul 
+1.Pre和Post过滤器
+- 继承ZuulFilter类
+- 重写四个方法
+
+```java
+@Component
+public class XXXFilter extends ZuulFilter {
+    @Override
+    public String filterType() {
+        return null;
+    }
+
+    @Override
+    public int filterOrder() {
+        return 0;
+    }
+
+    @Override
+    public boolean shouldFilter() {
+        return false;
+    }
+
+    @Override
+    public Object run() throws ZuulException {
+        return null;
+    }
+}
+```
+- 具体配置见FilterConstants常量类
+
+2.限流
+> 时机：请求被转发之前调用
+> 令牌桶限流
+```java
+public class RateLimitFilter extends ZuulFilter {
+    private static final RateLimiter RATE_LIMITER = RateLimiter.create(100);
+    }
+    
+```
+- import com.google.common.util.concurrent.RateLimiter;
+
+3.鉴权
 
     
