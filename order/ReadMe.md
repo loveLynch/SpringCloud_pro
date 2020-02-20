@@ -288,4 +288,58 @@ public interface StreamClient {
 ```yaml
 spring.cloud.stream.bindings.myMessage.group=order
 ```
+
+# 服务网关和Zuul
+1.服务网关的要素
+- 稳定性，高可用
+- 性能、并发性
+- 安全性
+- 扩展性
+
+2.常用的网关方案
+- Nginx + Lua
+- Kong
+- Tyk
+- Spring Cloud Zuul
+
+3.Zuul的特点
+- 路由+过滤器 = Zuul
+- 核心是一系列的过滤器
+
+4.Zuul的四种过滤器API
+- 前置（Pre）
+- 后置（Post）
+- 路由（Route）
+- 错误（Error)
+
+5.Zuul自定义路由
+> 配置文件
+```properties
+#Zuul自定义路由 product -> myProduct
+#zuul.routes.myProduct.path=/myProduct/**
+#zuul.routes.myProduct.service-id=product
+#简洁写法
+#zuul.routes.product=/myProduct/**
+#cookie不过滤掉，配置为空
+#zuul.routes.sensitiveHeaders=
+#排除某些路由
+#zuul.ignored-patterns=/**/product/listForOrder
+```
+
+6.动态配置路由
+- git上配置配置文件，推送到项目
+- 动态导入ZuulConfig
+    ```java
+@Component
+public class ZuulConfig {
+
+    @ConfigurationProperties("zuul")
+    @RefreshScope
+    public ZuulProperties zuulProperties() {
+        return new ZuulProperties();
+    }
+}
+
+```
+
     
