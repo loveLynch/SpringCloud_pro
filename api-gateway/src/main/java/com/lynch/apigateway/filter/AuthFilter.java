@@ -38,11 +38,14 @@ public class AuthFilter extends ZuulFilter {
         RequestContext requestContext = RequestContext.getCurrentContext();
         HttpServletRequest request = requestContext.getRequest();
         /*
-         * /order/create 只能买家访问
-         * /order/finish 只能卖家访问
-         * /*product/list 都可以访问
+         * /order/create 只能买家访问(cookie里有openid)
+         * /order/finish 只能卖家访问(cookie里有token，并且对应的redis中有值）
+         * /product/list 都可以访问
          */
-        
+        if ("/order/create".equals(request.getRequestURI())){
+
+        }
+
 
         return null;
     }
