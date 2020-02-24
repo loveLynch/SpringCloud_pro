@@ -397,6 +397,37 @@ public class RateLimitFilter extends ZuulFilter {
 ```
 - import com.google.common.util.concurrent.RateLimiter;
 
-3.鉴权
+3.鉴权（权限校验）
+- 在前置过滤器中实现相关逻辑
+- 分布式Session Vs OAuth2
+
+4.跨域
+- 跨域问题
+- 在被调用的类或者方法上增加@CrossOrigin注解
+    - 作用域在类和方法上
+- 在Zuul里增加CorsFilter过滤器
+    - 作用域在网关上
+    
+    
+- @CrossOrigin (allowCredentials = "true")//单个方法（接口）跨域,(allowCredentials = "true")，允许cookie跨域
+- Zuul中跨域配置
+```java
+@Component
+public class CorsConfig {
+    @Bean
+    public CorsFilter corsFilter() {
+        final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        final CorsConfiguration config = new CorsConfiguration();
+        config.setAllowCredentials(true);
+        config.setAllowedOrigins(Arrays.asList("*")); //原始域，如：http://www.a.com
+        config.setAllowedHeaders(Arrays.asList("*"));//允许头
+        config.setAllowedMethods(Arrays.asList("*"));//允许的方法，get,post ...
+        config.setMaxAge(300l);//缓存时间
+        source.registerCorsConfiguration("/**", config);
+        return new CorsFilter(source);
+    }
+
+}
+```
 
     
