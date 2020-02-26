@@ -430,4 +430,125 @@ public class CorsConfig {
 }
 ```
 
+# Hystrix
+1.Spring Cloud Hystrix
+- 防止雪崩利器
+- 基于Netflix对应的Hystrix
+- 功能
+    - 服务器降级
+    - 依赖隔离
+    - 服务熔断
+    - 监控（Hystrix Dashboard)
     
+2.服务降级
+- 优先核心服务，非核心服务不可用或弱可用
+- 通过HystrixCommand注解具体指定
+- fallbackMethod(回退函数)中具体实现降级逻辑
+
+> 触发降级
+> - 依赖
+> - 注解 @EnableCircuitBreaker和@HystrixCommand
+> - fallbackMethod具体实现
+
+> 超时设置
+```java
+  @HystrixCommand(commandProperties = {
+            @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "3000")
+    }) 
+    //超时时间设置
+```
+
+3.依赖隔离
+- 线程池隔离
+- Hystrix自动实现了依赖隔离
+
+4.服务熔断
+```java
+    @HystrixCommand(commandProperties = {
+            @HystrixProperty(name = "circuitBreaker.enabled", value = "true"), //设置熔断
+            @HystrixProperty(name = "circuitBreaker.requestVolumeThreshold", value = "10"),//断路器最小请求数
+            @HystrixProperty(name = "circuitBreaker.sleepWindowInMilliseconds", value = "10000"),//断路器休眠时间窗，结束后会将断路器设置为half open；如果下一次请求成功，会主逻辑，断路器closed；如果下一次失败，断路器进入open
+            @HystrixProperty(name = "circuitBreaker.errorThresholdPercentage", value = "60")//断路器打开的错误率条件
+    })
+```
+- Circuit Breaker：断路器
+
+5.使用配置项——配置Hystrix
+```properties
+#hystrix全局配置超时时间
+# hystrix.command.default.execution.isolation.thread.timeoutInMilliseconds=1000
+#hystrix为某个方法配置超时时间（getProductInfoList)
+# hystrix.command.getProductInfoList.execution.isolation.thread.timeoutInMilliseconds=3000
+```
+- 注意hystrix.command.default
+
+6.feign-hystrix的使用
+- 配置：feign.hystrix.enabled=true
+- 服务调用接口：@FeignClient(name="product",fallback = ProductClient.ProductClientFallback.class)
+
+
+# 服务追踪
+1.链路监控
+1.spring cloud sleuth
+- 添加依赖
+> <!--<dependency>-->
+            <!--<groupId>org.springframework.cloud</groupId>-->
+            <!--<artifactId>spring-cloud-starter-sleuth</artifactId>-->
+        <!--</dependency>-->
+
+- 修改配置文件
+> logging.level.org.springframework.cloud.netflix.feigin=debug
+2.zipkip
+- docker部署zipkip
+> docker run -d -p 9411:9411 openzipkin/zipkin
+- 添加依赖
+>      <!--<dependency>-->
+              <!--<groupId>org.springframework.cloud</groupId>-->
+              <!--<artifactId>spring-cloud-sleuth-zipkin</artifactId>-->
+          <!--</dependency>-->
+
+- 修改配置文件
+> spring.zipkin.base-url=http://localhost:9411
+
+3.集成步骤
+- 引入依赖
+> 包含sleuth和zipkin
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-zipkip</artifactId>
+        </dependency>
+        
+- 启动Zipkin Server
+- 配置参数
+
+4.分布式追踪系统
+- 核心步骤
+    - 数据采集
+    - 数据存储
+    - 查询显示
+    
+5.OpenTracing
+- 优势
+    - 来自CNCF
+    - ZIKIP、TRACER、JAEGER、GRPC等
+6.Annotation
+- 事件类型
+    - cs(Client Send)：客户端发起请求的时间
+    - cr(Client Received)：客户端收到处理完成请求的时间
+    - ss(Server Send)：服务端处理完成逻辑的时间
+    - sr(Server Received)：服务端收到调用端请求的时间
+- 客户端调用的时间=cr-cs
+- 服务端处理的时间=sr-ss
+
+7.ZipKin
+- Zipkin 设计源于Google Dapper文章
+- twitter开源
+- 核心组件
+    - UI
+    - API
+    - Collector
+    - Storage
+- 几个关键概念
+    - traceId：全局跟踪id，跟踪的入口点
+    - spanId：下一层的请求跟踪id
+    - parentId：上一次请求id，将前后请求串联起来
